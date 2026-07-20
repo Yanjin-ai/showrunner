@@ -170,6 +170,21 @@ def ui_seg(name, shot_path, seconds, crop=None):
     return seg, seconds
 
 
+def rec_seg(name, src, t0, t1, crop=None, speed=1.0):
+    """Trim a live session recording; optional punch-in crop and speed-up."""
+    seg = TMP / f"{name}.mp4"
+    vf = []
+    if crop:
+        vf.append(f"crop={crop[2]}:{crop[3]}:{crop[0]}:{crop[1]}")
+    vf.append("scale=1920:1080")
+    if speed != 1.0:
+        vf.append(f"setpts=PTS/{speed}")
+    vf.append("fps=30")
+    run(["ffmpeg", "-y", "-ss", str(t0), "-t", str(round(t1 - t0, 3)), "-i", str(src),
+         "-vf", ",".join(vf), "-an", "-c:v", "libx264", "-pix_fmt", "yuv420p", str(seg)])
+    return seg, round(dur_of(seg), 3)
+
+
 def lower_third(text):
     """Translucent ivory chip with eyebrow text, for film overlays (CJK-capable)."""
     from showrunner.subtitle_render import _font as cjk_font
@@ -215,7 +230,9 @@ def music_bed(seconds):
           "sine=frequency=164.81:duration={d},tremolo=f=0.12:d=0.75[s4];"
           "sine=frequency=220:duration={d},tremolo=f=0.13:d=0.6[s5];"
           "anoisesrc=color=brown:duration={d},lowpass=f=320[nz];"
-          "[s1][s2][s3][s4][s5][nz]amix=inputs=6:weights='0.9 1.0 0.62 0.55 0.3 0.5',"
+          "sine=frequency=55:duration={d},tremolo=f=1.7:d=0.95[pl];"
+          "[s1][s2][s3][s4][s5][nz][pl]amix=inputs=7:"
+          "weights='0.9 1.0 0.62 0.55 0.3 0.5 0.55',"
           "lowpass=f=1400,aecho=0.7:0.55:410|780:0.24|0.16,"
           "afade=t=in:d=3,afade=t=out:st={fo}:d=4,volume=5.0[a]").format(
               d=seconds + 1, fo=seconds - 4)
@@ -231,45 +248,42 @@ def main():
     vo = {} if no_vo else make_vo()
     vd = {k: dur_of(p) for k, p in vo.items()}
 
-    def content_len(base, *keys, card=2.6):
-        """Content segment stretches so the chapter's VO fits (card + content)."""
-        need = sum(vd.get(k, 0) for k in keys)
-        return max(base, need - card + 1.4)
-
+    REC = OUT / "_rec"
     segs = []   # (path, dur, vo_key_starting_here)
-    segs.append((*card_seg("open", 3.6, "One line in — a finished vertical drama out",
-                           "AI Showrunner", "a virtual production studio on QwenCloud"), "open"))
-    segs.append((*card_seg("c1", 2.6, "Chapter 01", "The brief",
-                           "price shown before a single frame is rendered"), "brief"))
-    segs.append((*ui_seg("ui_create", SRC / "fresh_create.png",
-                         content_len(4.5, "brief"), crop=(0, 0, 1800, 800)), None))
-    segs.append((*card_seg("c2", 2.6, "Chapter 02", "The script",
-                           "four beats · story bible · human approval gates"), "script"))
-    segs.append((*ui_seg("ui_bible", SRC / "fresh_bible_110141.png",
-                         content_len(4.5, "script"), crop=(0, 0, 1800, 924)), None))
-    segs.append((*card_seg("c3", 2.6, "Chapter 03", "The cast",
-                           "one locked portrait drives every shot"), "cast"))
-    segs.append((*ui_seg("ui_cast", GAL / "05_the_cast.png",
-                         content_len(4.2, "cast"), crop=(0, 130, 1920, 1210)), None))
-    segs.append((*card_seg("c4", 2.6, "Chapter 04", "The shoot",
-                           "Wan2.7 renders — Qwen-VL judges every take"), "shoot"))
-    segs.append((*ui_seg("ui_shots", SRC / "fresh_shots_023130.png",
-                         content_len(4.5, "shoot"), crop=(0, 0, 1800, 984)), None))
-    segs.append((*film_seg("film_night", RUNS / "20260706-110141/final.mp4",
-                           max(11, vd.get("film1", 0) + 4),
-                           "夜班替身 · generated / judged / cut by the system"), "film1"))
-    segs.append((*card_seg("c5", 2.6, "Chapter 05", "The final cut",
-                           "bilingual burn-in · zh/en/es tracks · AIGC label"), "final"))
-    segs.append((*ui_seg("ui_final", SRC / "fresh_final_110141.png",
-                         content_len(4.0, "final"), crop=(0, 0, 1800, 700)), None))
-    segs.append((*film_seg("film_alibi", RUNS / "20260706-023130/final.mp4", 9,
-                           "完美不在场 · bilingual burned subtitles"), None))
-    segs.append((*film_seg("film_loop", RUNS / "20260706-103834/final.mp4", 6,
-                           "the sandbox loop · consistency 9/10 via locked cast"), None))
-    segs.append((*card_seg("close", max(4.2, vd.get("close", 0) + 1.8),
-                           "github.com/Yanjin-ai/showrunner", "Built on QwenCloud",
-                           "narrated by qwen3-tts · Qwen3.7-Max · Qwen-VL · Wan2.7",
-                           closing=True), "close"))
+
+    def add(path_dur, key=None):
+        segs.append((*path_dur, key))
+
+    # cold open, then a LIVE session end to end — Manus-launch pacing
+    add(card_seg("open", 2.8, "One line in — a finished vertical drama out",
+                 "AI Showrunner", "a live session · nothing staged"), "open")
+    add(rec_seg("liv_create", REC / "create.webm", 0.3, 6.8), "brief")
+    add(rec_seg("liv_estimate", REC / "create.webm", 6.0, 9.4,
+                crop=(120, 282, 1200, 675)))
+    add(card_seg("c_script", 1.8, "Live", "The script",
+                 "four beats · approved by a human"), "script")
+    add(rec_seg("liv_bible", REC / "run.webm", 0.6, 4.2))
+    add(rec_seg("liv_shots", REC / "run.webm", 4.2, 8.6), "shoot")
+    add(rec_seg("liv_qa", REC / "run.webm", 7.6, 11.8, crop=(300, 0, 1200, 675)))
+    add(card_seg("c_cast", 1.8, "Live", "The cast",
+                 "one locked portrait — every shot"), "cast")
+    add(ui_seg("ui_cast", GAL / "05_the_cast.png", 5.6, crop=(0, 130, 1920, 1210)))
+    add(card_seg("c_final", 1.8, "Live", "The final cut",
+                 "zh · en · es from one master script"), "final")
+    add(rec_seg("liv_final", REC / "final.webm", 0.5, 6.0))
+    add(rec_seg("liv_player", REC / "final.webm", 6.0, 13.5,
+                crop=(188, 138, 960, 540)))
+    add(rec_seg("liv_wall", REC / "wall.webm", 0.3, 6.9, speed=1.35))
+    add(film_seg("film_night", RUNS / "20260706-110141/final.mp4", 6,
+                 "夜班替身 · generated / judged / cut by the system"), "film1")
+    add(film_seg("film_alibi", RUNS / "20260706-023130/final.mp4", 5,
+                 "完美不在场 · bilingual burn-in"))
+    add(film_seg("film_loop", RUNS / "20260706-103834/final.mp4", 4.5,
+                 "the sandbox loop · locked cast, same face"))
+    add(card_seg("close", max(4.2, vd.get("close", 0) + 1.8),
+                 "github.com/Yanjin-ai/showrunner", "Built on QwenCloud",
+                 "narrated by qwen3-tts · every frame by the system",
+                 closing=True), "close")
 
     # ---- xfade chain (video) + start-time bookkeeping ----
     starts = []
@@ -302,10 +316,13 @@ def main():
                         f"afade=t=in:st={starts[i]:.2f}:d=0.5[fa{i}]")
             mixes.append(f"[fa{i}]")
             ai += 1
+    prev_end = 0.0   # narration never overlaps itself: late lines queue up
     for i, (_p, _d, k) in enumerate(segs):
         if k and k in vo:
             a_inputs += ["-i", str(vo[k])]
-            delay = int((starts[i] + 0.55) * 1000)
+            start = max(starts[i] + 0.55, prev_end + 0.35)
+            prev_end = start + vd[k]
+            delay = int(start * 1000)
             a_fc.append(f"[{ai}:a]volume=1.0,adelay={delay}|{delay}[vo{i}]")
             mixes.append(f"[vo{i}]")
             ai += 1
