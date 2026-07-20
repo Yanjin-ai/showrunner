@@ -15,8 +15,14 @@ import sys
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
-from scripts.make_devpost_assets import (IVORY, INK, ACCENT, HAIR, MUTE,
-                                         serif, sans, fit, frame_shadowed)
+from scripts.make_gallery import (BG as IVORY, INK, PINK as ACCENT,
+                                  BORDER as HAIR, MUTE, sans,
+                                  glow_card as frame_shadowed)
+
+
+def fit(img, box_w, box_h):
+    r = min(box_w / img.width, box_h / img.height)
+    return img.resize((round(img.width * r), round(img.height * r)), Image.LANCZOS)
 
 ROOT = Path(".")
 SRC = ROOT / "docs/devpost/source"
@@ -83,7 +89,7 @@ def render_card_frames(frames_dir, seconds, eyebrow, headline, sub=None, closing
     frames_dir.mkdir(parents=True, exist_ok=True)
     n = int(seconds * FPS)
     m = 120
-    f_h = serif(110)
+    f_h = sans(94, 1)
     f_s = sans(32)
     f_e = sans(28)
     for i in range(n):
@@ -173,9 +179,9 @@ def lower_third(text):
     trk = 6
     wdt = int(sum(dl.textlength(c, font=f) + trk for c in text.upper()) - trk)
     pad = 34
-    chip = Image.new("RGBA", (wdt + pad * 2, 92), (245, 242, 235, 216))
+    chip = Image.new("RGBA", (wdt + pad * 2, 92), (14, 17, 24, 226))
     d = ImageDraw.Draw(chip)
-    d.line([0, 0, chip.width, 0], fill=(*INK, 255), width=2)
+    d.line([0, 0, chip.width, 0], fill=(*ACCENT, 255), width=3)
     x = pad
     for ch in text.upper():
         d.text((x, 28), ch, font=f, fill=(*INK, 255))
