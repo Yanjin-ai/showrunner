@@ -5,6 +5,20 @@ set -euo pipefail
 
 APP=/opt/showrunner
 
+# tiny instances (512 MiB) need swap or pip/ffmpeg get OOM-killed
+if [ "$(awk '/MemTotal/{print $2}' /proc/meminfo)" -lt 1048576 ] && [ ! -f /swapfile ]; then
+  echo "==> small RAM detected: adding 2G swapfile"
+  sudo fallocate -l 2G /swapfile && sudo chmod 600 /swapfile
+  sudo mkswap /swapfile >/dev/null && sudo swapon /swapfile
+  echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab >/dev/null
+fi
+
+# mainland-China regions: use the Aliyun PyPI mirror
+PIP_MIRROR=""
+if curl -s --max-time 2 http://100.100.100.200/latest/meta-data/region-id | grep -q "^cn-"; then
+  PIP_MIRROR="-i https://mirrors.aliyun.com/pypi/simple/"
+fi
+
 echo "==> installing system deps (ffmpeg, CJK fonts for burned subtitles, nginx)"
 sudo apt-get update
 sudo apt-get install -y python3-venv python3-pip ffmpeg fonts-noto-cjk git nginx rsync
@@ -16,8 +30,8 @@ sudo rsync -a --exclude .venv --exclude runs --exclude .git ./ "$APP"/
 echo "==> python env"
 cd "$APP"
 python3 -m venv .venv
-.venv/bin/pip install -q -U pip
-.venv/bin/pip install -q -r requirements.txt
+.venv/bin/pip install -q -U pip $PIP_MIRROR
+.venv/bin/pip install -q -r requirements.txt $PIP_MIRROR
 
 if [ ! -f "$APP/.env" ]; then
   cp .env.example .env

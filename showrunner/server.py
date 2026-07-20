@@ -336,21 +336,22 @@ def _derive_shot_state(run_id: str, shots: list[dict], events: list[dict]) -> li
     for sid, st in by_id.items():
         clips = [c for c in (sorted(d.glob(f"{sid}_norm.mp4")) or sorted(d.glob(f"{sid}_try*.mp4")))
                  if not c.name.startswith("._")]
+        # poster from the QA-sampled frames so shot walls render instantly —
+        # independent of clip presence (trimmed deployments ship frames only)
+        fdirs = [f for f in sorted(d.glob(f"{sid}_try*.frames"))
+                 if f.is_dir() and not f.name.startswith("._")]
+        if fdirs:
+            fs = [p for p in sorted(fdirs[-1].glob("f*.png")) if not p.name.startswith("._")]
+            if fs:
+                pick = fs[min(1, len(fs) - 1)]
+                st["poster"] = f"/media/{run_id}/shots/{fdirs[-1].name}/{pick.name}"
+        else:  # legacy single-frame QA artifact
+            stills = [p for p in sorted(d.glob(f"{sid}_try*.frame.png"))
+                      if not p.name.startswith("._")]
+            if stills:
+                st["poster"] = f"/media/{run_id}/shots/{stills[-1].name}"
         if clips:
             st["clip"] = f"/media/{run_id}/shots/{clips[-1].name}"
-            # poster from the QA-sampled frames so shot walls render instantly
-            fdirs = [f for f in sorted(d.glob(f"{sid}_try*.frames"))
-                     if f.is_dir() and not f.name.startswith("._")]
-            if fdirs:
-                fs = [p for p in sorted(fdirs[-1].glob("f*.png")) if not p.name.startswith("._")]
-                if fs:
-                    pick = fs[min(1, len(fs) - 1)]
-                    st["poster"] = f"/media/{run_id}/shots/{fdirs[-1].name}/{pick.name}"
-            else:  # legacy single-frame QA artifact
-                stills = [p for p in sorted(d.glob(f"{sid}_try*.frame.png"))
-                          if not p.name.startswith("._")]
-                if stills:
-                    st["poster"] = f"/media/{run_id}/shots/{stills[-1].name}"
             if st["status"] in ("generating", "queued"):
                 st["status"] = "done"
             # A failed retry/regen must not mask a clip that already passed QA — the final

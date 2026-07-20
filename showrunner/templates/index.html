@@ -88,7 +88,7 @@
   /* shots grid */
   .scenehdr{color:var(--dim2);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin:22px 0 10px}
   .shot{display:grid;grid-template-columns:132px 1fr;gap:14px;padding:13px;margin-bottom:11px}
-  .shot video,.shot .thumb{width:132px;height:234px;object-fit:cover;border-radius:8px;background:#000}
+  .shot video,.shot img.still,.shot .thumb{width:132px;height:234px;object-fit:cover;border-radius:8px;background:#000}
   .shot .thumb{display:grid;place-items:center;color:var(--dim2);font-size:11px;text-align:center;border:1px dashed var(--edge2)}
   .shot .act{font-weight:650;margin:1px 0 5px;font-size:14.5px}
   .shot .cine{color:var(--dim);font-size:12px;margin-bottom:9px}
@@ -367,7 +367,7 @@ function viewShots(s){
       const L=lc[sh.id]||{};const state=L.state||sh.status;const locked=state==='locked';
       const q=sh.qa;const qa=q?`<div class="qa">
       <span class="q">narrative <b>${q.na??'–'}</b></span><span class="q">consistency <b>${q.cc??'–'}</b></span><span class="q">quality <b>${q.tq??'–'}</b></span></div>`:'';
-      const vid=sh.clip?`<video src="${sh.clip}" ${sh.poster?`poster="${sh.poster}"`:''} muted loop playsinline onmouseover="this.play()" onmouseout="this.pause()"></video>`:`<div class="thumb">${state}</div>`;
+      const vid=sh.clip?`<video src="${sh.clip}" ${sh.poster?`poster="${sh.poster}"`:''} muted loop playsinline onmouseover="this.play()" onmouseout="this.pause()"></video>`:(sh.poster?`<img class="still" src="${sh.poster}">`:`<div class="thumb">${state}</div>`);
       const versions=(L.versions||[]).length>1?`<div style="display:flex;gap:5px;margin-top:8px;flex-wrap:wrap">
         <span class="muted" style="font-size:11px">takes:</span>${L.versions.map(v=>{
           const cur=v.n===L.current;const pass=v.qa&&v.qa.passed;
