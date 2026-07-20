@@ -129,10 +129,32 @@ async def _log_requests(request: Request, call_next):
     return resp
 
 
+_ECS_META = None
+
+
+def _ecs_identity():
+    """Self-attest where we run: Alibaba Cloud ECS exposes an on-instance
+    metadata service at 100.100.100.200 (only reachable from inside ECS)."""
+    global _ECS_META
+    if _ECS_META is None:
+        meta = {}
+        try:
+            import httpx
+            base = "http://100.100.100.200/latest/meta-data"
+            with httpx.Client(timeout=0.4) as c:
+                for k in ("instance-id", "region-id", "zone-id"):
+                    meta[k] = c.get(f"{base}/{k}").text
+            meta["provider"] = "alibaba-cloud-ecs"
+        except Exception:
+            meta = {"provider": "local-dev"}
+        _ECS_META = meta
+    return _ECS_META
+
+
 @app.get("/healthz")
 def healthz():
     return {"ok": True, "active_job": (_current_job or {}).get("run_id"),
-            "queue_len": len(_queue), "auth": bool(TOKEN)}
+            "queue_len": len(_queue), "auth": bool(TOKEN), "cloud": _ecs_identity()}
 
 
 @app.get("/queue")

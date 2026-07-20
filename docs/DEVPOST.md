@@ -7,6 +7,8 @@
 | **Try it out** | Add the two links below. |
 | **Video demo** | Upload `docs/devpost/demo_reel.mp4` to YouTube (unlisted is fine), paste the link. Or record the narrated 3-min version per [DEMO_SCRIPT.md](DEMO_SCRIPT.md). |
 | **Image gallery** | Upload `docs/devpost/gallery/01…08.png` in numeric order (all 3:2, under 5 MB). |
+| **Proof of Alibaba Cloud deployment** | Code-file URL: `https://github.com/Yanjin-ai/showrunner/blob/main/showrunner/clients/__init__.py` — the Alibaba Cloud service map (Qwen3.7-Max / Qwen-VL / Wan2.7 / Qwen3-TTS via DashScope + ECS hosting). Runtime proof: after deploying per [ECS_QUICKSTART.md](ECS_QUICKSTART.md), `http://<ECS-IP>/healthz` returns the **ECS instance-id and region** read from Alibaba Cloud's on-instance metadata service — screenshot that JSON next to the browser address bar. |
+| **Architecture diagram** | Upload `docs/devpost/architecture.png` (or the `.pdf`) — frontend ↔ ECS backend + file store ↔ Qwen Cloud, with endpoints. |
 
 ## Built with
 
