@@ -1,0 +1,21 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+runs/
+runs_archive/
+*.mp4
+*.png
+!assets/**
+# submission assets + one curated replayable sample production
+!docs/devpost/**
+!samples/**
+# macOS junk (this repo lives on an exFAT drive)
+._*
+.DS_Store
+.claude/settings.local.json
+
+# reusable asset library (local generated assets)
+library/
+docs/devpost/_reel/
+docs/devpost/source/

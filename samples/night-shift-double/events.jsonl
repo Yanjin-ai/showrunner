@@ -1,0 +1,27 @@
+{"t": 1783328501.225309, "stage": "start", "brief": "深夜便利店的女店员发现监控画面里的自己，正在做出她从未做过的动作"}
+{"t": 1783328594.3779352, "stage": "planned", "title": "夜班替身", "characters": 1}
+{"t": 1783328663.926668, "stage": "storyboarded", "shots": 6}
+{"t": 1783328829.8904252, "stage": "ref_minted", "character": "lin_ye"}
+{"t": 1783328829.891993, "stage": "gen", "shot": "s0_sh1", "attempt": 1}
+{"t": 1783328829.891855, "stage": "gen", "shot": "s0_sh0", "attempt": 1}
+{"t": 1783328829.892273, "stage": "gen", "shot": "s1_sh0", "attempt": 1}
+{"t": 1783328829.8921752, "stage": "gen", "shot": "s1_sh1", "attempt": 1}
+{"t": 1783328894.765105, "stage": "gen_fail", "shot": "s0_sh1", "attempt": 1, "error": "The write operation timed out"}
+{"t": 1783328894.767169, "stage": "gen", "shot": "s0_sh1", "attempt": 2}
+{"t": 1783328894.807308, "stage": "gen_fail", "shot": "s1_sh1", "attempt": 1, "error": "The write operation timed out"}
+{"t": 1783328894.807737, "stage": "gen", "shot": "s1_sh1", "attempt": 2}
+{"t": 1783328896.116769, "stage": "gen_fail", "shot": "s1_sh0", "attempt": 1, "error": "The write operation timed out"}
+{"t": 1783328896.1168, "stage": "gen_fail", "shot": "s0_sh0", "attempt": 1, "error": "The write operation timed out"}
+{"t": 1783328896.1174662, "stage": "gen", "shot": "s1_sh0", "attempt": 2}
+{"t": 1783328896.1178071, "stage": "gen", "shot": "s0_sh0", "attempt": 2}
+{"t": 1783328957.4467158, "stage": "gen_fail", "shot": "s0_sh1", "attempt": 2, "error": "The write operation timed out"}
+{"t": 1783328957.448297, "stage": "gen", "shot": "s2_sh0", "attempt": 1}
+{"t": 1783328964.073762, "stage": "gen_fail", "shot": "s0_sh0", "attempt": 2, "error": "The write operation timed out"}
+{"t": 1783328964.074914, "stage": "gen", "shot": "s2_sh1", "attempt": 1}
+{"t": 1783329512.383007, "stage": "qa", "shot": "s1_sh0", "attempt": 2, "passed": true, "na": 9, "cc": 10, "tq": 9}
+{"t": 1783329534.5563142, "stage": "qa", "shot": "s1_sh1", "attempt": 2, "passed": false, "na": 4, "cc": 9, "tq": 7}
+{"t": 1783330426.967884, "stage": "critic_error", "shot": "s2_sh1", "error": "Request timed out."}
+{"t": 1783330697.5793128, "stage": "critic_error", "shot": "s2_sh0", "error": "Request timed out."}
+{"t": 1783330697.5918798, "stage": "edit", "shots": 4}
+{"t": 1783330771.854551, "stage": "burned", "cues": 3}
+{"t": 1783330772.551691, "stage": "done", "final": "runs/20260706-110141/final.mp4"}

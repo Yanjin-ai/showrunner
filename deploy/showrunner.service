@@ -1,0 +1,15 @@
+[Unit]
+Description=AI Showrunner (Track 2)
+After=network.target
+
+[Service]
+Type=simple
+User=showrunner
+WorkingDirectory=/opt/showrunner
+EnvironmentFile=/opt/showrunner/.env
+ExecStart=/opt/showrunner/.venv/bin/uvicorn showrunner.server:app --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

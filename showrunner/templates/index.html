@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>AI Showrunner — Vertical Drama Studio</title>
+<style>
+  :root{
+    --bg:#0a0c11; --bg2:#0e1119; --panel:#141821; --panel2:#181d28; --edge:#232838; --edge2:#2c3242;
+    --txt:#eef1f7; --dim:#8a93a6; --dim2:#5b6478;
+    --accent:#ff5c7a; --accent2:#ff7d93; --ok:#38d39f; --blue:#5c9dff; --warn:#ffb454; --bad:#ff5c5c;
+    --hook:#ff5c7a; --friction:#5c9dff; --spike:#ffb454; --button:#38d39f;
+    --r:12px; --r2:9px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:var(--bg);color:var(--txt);font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:#20263400;border-radius:8px}
+  *:hover::-webkit-scrollbar-thumb{background:#242a38}
+  a{color:inherit;text-decoration:none}
+  .app{display:grid;grid-template-columns:236px 1fr;height:100vh}
+
+  /* sidebar */
+  .side{background:linear-gradient(180deg,#0c0f16,#0a0c11);border-right:1px solid var(--edge);display:flex;flex-direction:column;padding:18px 14px}
+  .brand{display:flex;align-items:center;gap:9px;padding:6px 8px 18px;font-weight:800;font-size:16px;letter-spacing:.2px}
+  .brand small{display:block;color:var(--dim2);font-weight:600;font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+  .nav{display:flex;flex-direction:column;gap:3px}
+  .nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:var(--dim);font-weight:600;cursor:pointer;transition:.12s}
+  .nav a:hover{background:#141a24;color:var(--txt)}
+  .nav a.on{background:linear-gradient(90deg,#20141a,#141824);color:var(--txt)}
+  .nav a.on .ic{color:var(--accent)}
+  .ic{width:18px;text-align:center;color:var(--dim2)}
+  .side .foot{margin-top:auto;padding:12px 10px 4px;border-top:1px solid var(--edge)}
+  .meter{font-size:11px;color:var(--dim)}
+  .meter b{color:var(--ok);font-weight:700}
+  .bar{height:5px;background:#141a24;border-radius:4px;margin-top:6px;overflow:hidden}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--ok),var(--warn));border-radius:4px}
+
+  /* main */
+  .main{overflow:auto;position:relative}
+  .wrap{max-width:1180px;margin:0 auto;padding:26px 30px 60px}
+  .h1{font-size:22px;font-weight:800;letter-spacing:.2px;margin:0 0 3px}
+  .sub{color:var(--dim);font-size:13px;margin:0 0 22px}
+  label{display:block;color:var(--dim);font-size:12px;font-weight:600;margin:14px 0 5px}
+  input,textarea,select{width:100%;background:var(--bg2);border:1px solid var(--edge);color:var(--txt);border-radius:var(--r2);padding:10px 12px;font:inherit;transition:.12s}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:#3a4256;box-shadow:0 0 0 3px #ff5c7a1a}
+  textarea{resize:vertical;min-height:74px}
+  .grid{display:grid;gap:12px}
+  .g4{grid-template-columns:repeat(4,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:1fr 1fr}
+  .btn{background:linear-gradient(180deg,var(--accent2),var(--accent));color:#fff;border:0;border-radius:10px;padding:13px 18px;font-weight:700;font-size:14px;cursor:pointer;transition:.12s;box-shadow:0 6px 18px -8px #ff5c7a99}
+  .btn:hover{filter:brightness(1.06)} .btn:disabled{opacity:.5;cursor:default;box-shadow:none}
+  .btn.ghost{background:transparent;border:1px solid var(--edge2);color:var(--txt);box-shadow:none;padding:9px 14px}
+  .btn.ghost:hover{background:#141a24}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:var(--bg2);border:1px solid var(--edge);color:var(--dim);font-size:12.5px;font-weight:600;cursor:pointer;transition:.12s}
+  .chip:hover{border-color:var(--edge2);color:var(--txt)}
+  .chip.on{background:#20141a;border-color:var(--accent);color:#ffd0da}
+  .card{background:var(--panel);border:1px solid var(--edge);border-radius:var(--r);transition:.12s}
+  .card:hover{border-color:var(--edge2)}
+  .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+  .b-queued{background:#1b2231;color:var(--dim)} .b-generating{background:#16283b;color:var(--blue)}
+  .b-passed,.b-done{background:#12301f;color:var(--ok)} .b-retrying{background:#2e2612;color:var(--warn)}
+  .b-error{background:#2e1717;color:var(--bad)}
+  .muted{color:var(--dim)} .dim2{color:var(--dim2)}
+
+  /* run header + stepper */
+  .runhead{display:flex;align-items:center;gap:16px;margin-bottom:6px}
+  .runhead h2{margin:0;font-size:20px;font-weight:800}
+  .step{display:flex;gap:6px;margin:16px 0 24px;flex-wrap:wrap}
+  .step .s{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:9px;background:var(--bg2);border:1px solid var(--edge);color:var(--dim);font-weight:600;font-size:12.5px;cursor:pointer}
+  .step .s .n{width:19px;height:19px;border-radius:50%;background:#222a3a;color:var(--dim);display:grid;place-items:center;font-size:11px}
+  .step .s.on{border-color:var(--accent);color:var(--txt)} .step .s.on .n{background:var(--accent);color:#fff}
+  .step .s.done .n{background:var(--ok);color:#04120c}
+
+  /* gate */
+  .gate{background:linear-gradient(90deg,#2a1620,#151a26);border:1px solid var(--accent);border-radius:var(--r);padding:15px 17px;margin-bottom:20px;display:flex;align-items:center;gap:16px}
+  .gate h3{margin:0;font-size:14px;color:var(--accent2)}
+
+  /* story */
+  .charcard{display:flex;gap:12px;align-items:center;padding:12px;border-radius:var(--r2)}
+  .charcard img,.charcard .ph{width:52px;height:70px;object-fit:cover;border-radius:7px;background:#0b0e14;flex:none}
+  .beatline{position:relative;padding-left:26px;margin:6px 0}
+  .beatline:before{content:"";position:absolute;left:7px;top:22px;bottom:-14px;width:2px;background:var(--edge)}
+  .beatline:last-child:before{display:none}
+  .beatdot{position:absolute;left:0;top:5px;width:16px;height:16px;border-radius:50%;border:3px solid var(--bg);}
+  .beat-hook{background:var(--hook)} .beat-friction{background:var(--friction)} .beat-spike{background:var(--spike)} .beat-button{background:var(--button)}
+  .beattag{font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+
+  /* shots grid */
+  .scenehdr{color:var(--dim2);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin:22px 0 10px}
+  .shot{display:grid;grid-template-columns:132px 1fr;gap:14px;padding:13px;margin-bottom:11px}
+  .shot video,.shot .thumb{width:132px;height:234px;object-fit:cover;border-radius:8px;background:#000}
+  .shot .thumb{display:grid;place-items:center;color:var(--dim2);font-size:11px;text-align:center;border:1px dashed var(--edge2)}
+  .shot .act{font-weight:650;margin:1px 0 5px;font-size:14.5px}
+  .shot .cine{color:var(--dim);font-size:12px;margin-bottom:9px}
+  .qa{display:flex;gap:6px;flex-wrap:wrap}
+  .qa .q{font-size:11px;padding:3px 9px;border-radius:7px;background:var(--bg2);border:1px solid var(--edge)}
+  .qa .q b{color:var(--txt)}
+
+  /* final */
+  .final{display:grid;grid-template-columns:300px 1fr;gap:22px}
+  .final video{width:300px;border-radius:var(--r);background:#000;box-shadow:0 20px 50px -20px #000}
+  .tracks{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
+  .costtable{width:100%;border-collapse:collapse;margin-top:8px}
+  .costtable td{padding:7px 10px;border-bottom:1px solid var(--edge);font-size:13px}
+  .costtable td:last-child{text-align:right;color:var(--ok);font-weight:700}
+
+  /* run tiles */
+  .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+  .tile{cursor:pointer;overflow:hidden}
+  .tile .pic{aspect-ratio:9/16;background:#0b0e14;object-fit:cover;width:100%;display:block}
+  .tile .meta{padding:11px 12px}
+  .tile .meta .t{font-weight:700;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .empty{color:var(--dim);border:1px dashed var(--edge2);border-radius:var(--r);padding:40px;text-align:center}
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--edge);margin-bottom:20px}
+  .tabs a{padding:10px 15px;color:var(--dim);font-weight:650;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tabs a.on{color:var(--txt);border-color:var(--accent)}
+  .log{font:11px/1.6 ui-monospace,SFMono-Regular,monospace;color:var(--dim);background:var(--bg2);border:1px solid var(--edge);border-radius:9px;padding:10px 12px;max-height:150px;overflow:auto}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand">🎬 <span>Showrunner<small>Vertical Drama Studio</small></span></div>
+    <nav class="nav" id="nav">
+      <a data-v="create"><span class="ic">✦</span> New Production</a>
+      <a data-v="runs"><span class="ic">▤</span> Productions</a>
+      <a data-v="cast"><span class="ic">☺</span> Reusable Cast</a>
+    </nav>
+    <div class="foot">
+      <div class="meter" id="meter">Qwen3.7 · HappyHorse/Wan · Qwen-VL</div>
+      <div class="meter" id="qmeter" style="margin-top:6px"></div>
+    </div>
+  </aside>
+  <main class="main"><div class="wrap" id="main"></div></main>
+</div>
+<script>
+const S={view:'create',runId:null,run:null,timer:null,tab:'shots',genre:''};
+const $=(h)=>{const t=document.createElement('template');t.innerHTML=h.trim();return t.content.firstChild};
+const esc=(s)=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function nav(v){S.view=v;if(v!=='run'){if(S.timer)clearInterval(S.timer);S.timer=null;}
+  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===v));render();}
+document.getElementById('nav').addEventListener('click',e=>{const a=e.target.closest('a');if(a)nav(a.dataset.v)});
+
+function srtok(){return localStorage.getItem('sr_token')||''}
+async function api(u,opt){
+  opt=opt||{};opt.headers=Object.assign({},opt.headers||{});
+  if(srtok())opt.headers['Authorization']='Bearer '+srtok();
+  let r=await fetch(u,opt);
+  if(r.status===401){
+    const t=prompt('该服务器已开启鉴权,请输入访问 token:');
+    if(t){localStorage.setItem('sr_token',t);opt.headers['Authorization']='Bearer '+t;r=await fetch(u,opt);}
+  }
+  return r.json();
+}
+function badge(st){return `<span class="badge b-${st}">${st}</span>`}
+
+/* ---------- CREATE ---------- */
+function renderCreate(){
+  const genres=[['悬疑反转','Suspense · twist'],['霸总情感','CEO · romance'],['复仇逆袭','Revenge · rise'],['甜宠','Sweet romance'],['萌宠','Pet · voice-over'],['灵异','Supernatural']];
+  document.getElementById('main').innerHTML=`
+    <div class="h1">New Production</div>
+    <div class="sub">One line in → a finished vertical short drama. Reuses your locked cast &amp; style.</div>
+    <div class="card" style="padding:22px;max-width:760px">
+      <label>Genre template</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">${genres.map(g=>`<span class="chip" data-g="${g[0]}">${g[0]} · <span class="dim2" style="font-weight:500">${g[1]}</span></span>`).join('')}</div>
+      <label>Brief</label>
+      <textarea id="brief">深夜便利店的女店员发现监控画面里的自己，正在做出她从未做过的动作</textarea>
+      <div class="grid g4" style="margin-top:4px">
+        <div><label>Scenes</label><input id="scenes" type="number" value="4"></div>
+        <div><label>Characters</label><input id="chars" type="number" value="2"></div>
+        <div><label>Seconds</label><input id="seconds" type="number" value="60"></div>
+        <div><label>Shots / scene</label><input id="sps" type="number" value="1"></div>
+      </div>
+      <div class="grid g3" style="margin-top:4px">
+        <div><label>Consistency</label><select id="consistency"><option value="i2v">i2v — locked cast</option><option value="text">text — fast</option></select></div>
+        <div><label>Master language</label><select id="master"><option value="zh">中文</option><option value="en">English</option></select></div>
+        <div><label>Budget $ (0 = off)</label><input id="budget" type="number" value="0" step="0.5"></div>
+      </div>
+      <label>Subtitle / dub languages</label>
+      <input id="langs" value="zh,en,es">
+      <label style="display:flex;align-items:center;gap:8px;margin-top:14px;color:var(--txt)"><input type="checkbox" id="hitl" checked style="width:auto"> Human-in-the-loop approval gates</label>
+      <label style="display:flex;align-items:center;gap:8px;margin-top:8px;color:var(--txt)"><input type="checkbox" id="framegate" style="width:auto"> <b>Frame Gate</b> — approve cheap first-frame stills before any video spend (~15× cheaper per reject)</label>
+      <div style="margin-top:20px;display:flex;align-items:center;gap:14px">
+        <button class="btn" id="go" onclick="startRun()">▶ Start production</button>
+        <span class="muted" id="est" style="font-size:12.5px"></span>
+      </div>
+    </div>`;
+  const upd=()=>updateEstimate();
+  ['scenes','chars','sps','langs','consistency','framegate'].forEach(id=>{
+    const el=document.getElementById(id); if(el){el.addEventListener('change',upd);el.addEventListener('input',upd);}});
+  updateEstimate();
+  document.querySelectorAll('[data-g]').forEach(c=>c.onclick=()=>{
+    document.querySelectorAll('[data-g]').forEach(x=>x.classList.remove('on'));c.classList.add('on');S.genre=c.dataset.g;});
+}
+function runBody(){
+  const v=id=>document.getElementById(id).value;
+  return {brief:v('brief'),genre:S.genre||'悬疑反转',langs:v('langs').split(',').map(s=>s.trim()).filter(Boolean),
+    master_lang:v('master'),n_scenes:+v('scenes'),n_chars:+v('chars'),seconds:+v('seconds'),shots_per_scene:+v('sps'),
+    consistency:v('consistency'),budget_usd:(+v('budget'))||null,hitl:document.getElementById('hitl').checked,
+    frame_gate:document.getElementById('framegate').checked};
+}
+async function updateEstimate(){
+  try{
+    const e=await api('/estimate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(runBody())});
+    document.getElementById('est').innerHTML=`预计 <b style="color:var(--ok)">$${e.total}</b> · ~${e.video_gens} video gens${e.image_gens?` + ${e.image_gens} frames`:''}`;
+  }catch(err){}
+}
+async function startRun(){
+  const body=runBody();
+  document.getElementById('go').disabled=true;document.getElementById('go').textContent='Starting…';
+  const r=await api('/runs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  openRun(r.run_id);
+}
+
+/* ---------- PRODUCTIONS ---------- */
+async function renderRuns(){
+  document.getElementById('main').innerHTML=`<div class="h1">Productions</div><div class="sub">Every run is replayable — open one to inspect its bible, storyboard, shots and final cut.</div><div id="tiles"></div>`;
+  const r=await api('/runs');
+  const el=document.getElementById('tiles');
+  if(!r.runs||!r.runs.length){el.innerHTML='<div class="empty">No productions yet. Start one from <b>New Production</b>.</div>';return;}
+  el.className='tiles';
+  el.innerHTML=r.runs.map(x=>`<div class="card tile" onclick="openRun('${x.id}')">
+    ${x.cover?`<img class="pic" src="${x.cover}">`:'<div class="pic"></div>'}
+    <div class="meta"><div class="t">${esc(x.title)||x.id}</div><div class="muted" style="font-size:11.5px;margin-top:2px">${x.id}${x.final?' · ✓ final':''}</div></div></div>`).join('');
+}
+
+/* ---------- CAST ---------- */
+async function renderCast(){
+  document.getElementById('main').innerHTML=`<div class="h1">Reusable Cast</div><div class="sub">Locked character portraits &amp; voices — built once, reused across every production for consistency.</div><div id="castwrap"></div>`;
+  const l=await api('/library');const el=document.getElementById('castwrap');
+  if(!l.characters||!l.characters.length){el.innerHTML='<div class="empty">Cast library is empty. Run a production with <b>i2v consistency</b> to mint &amp; lock a character.</div>';return;}
+  el.className='tiles';
+  el.innerHTML=l.characters.map(c=>`<div class="card" style="overflow:hidden">
+    ${c.portrait?`<img class="pic" src="${c.portrait}">`:'<div class="pic" style="display:grid;place-items:center;color:var(--dim2)">no portrait</div>'}
+    <div class="meta"><div class="t">${esc(c.name)}</div>
+    <div class="muted" style="font-size:11.5px;margin-top:2px">${c.id} · v${c.version} · ${(c.voices||[]).length} voice(s)</div>
+    <div class="dim2" style="font-size:11px;margin-top:6px;line-height:1.4">${esc((c.appearance||'').slice(0,80))}</div></div></div>`).join('');
+}
+
+/* ---------- RUN (production detail) ---------- */
+function openRun(id,tab){S.runId=id;S.view='run';S.tab=tab||'shots';document.querySelectorAll('#nav a').forEach(a=>a.classList.remove('on'));
+  if(S.timer)clearInterval(S.timer);poll();S.timer=setInterval(poll,3000);}
+async function poll(){if(!S.runId)return;const s=await api('/runs/'+S.runId+'/state');if(s.error)return;S.run=s;
+  if(S.view==='run')renderRun();updateMeter(s);
+  if(s.status==='done'||s.status==='failed'){clearInterval(S.timer);S.timer=null;}}
+function updateMeter(s){const m=document.getElementById('meter');if(s&&s.cost){const c=s.cost;
+  m.innerHTML=`spent <b>$${c.total}</b> · ${c.calls} calls${c.ceiling?` / $${c.ceiling}`:''}
+    <div class="bar"><i style="width:${c.ceiling?Math.min(100,c.total/c.ceiling*100):8}%"></i></div>`;}}
+
+const STEPS=[['bible','Story'],['storyboard','Storyboard'],['production','Production'],['final','Final']];
+function stageIndex(s){const st=s.status;if(s.final)return 3;if((s.shots||[]).length)return 2;if(s.bible)return 1;return 0;}
+function renderRun(){
+  const s=S.run,si=stageIndex(s);
+  const idle=['done','failed','resume_error','regen_error'].includes(s.status);
+  let h=`<div class="runhead"><button class="btn ghost" onclick="nav('runs')">←</button>
+    <h2>${esc(s.title)||'Production'}</h2>${badge(s.status||'…')}
+    <span style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      ${idle?`<button class="btn ghost" onclick="resumeRun()" title="Reuse QA-passed shots, regenerate the rest">⟳ Resume</button>`:''}
+      <span class="muted" style="font-size:12px">${s.run_id}</span></span></div>
+    <div class="step">${STEPS.map((st,i)=>`<div class="s ${S.tab===st[0]||(st[0]==='production'&&S.tab==='shots')?'on':''} ${i<si?'done':''}" onclick="S.tab='${st[0]==='production'?'shots':st[0]}';renderRun()"><span class="n">${i<si?'✓':i+1}</span>${st[1]}</div>`).join('')}</div>`;
+  if(s.pending_gate)h+=renderGate(s);
+  const tab=S.tab;
+  if(tab==='bible')h+=viewStory(s);
+  else if(tab==='storyboard')h+=viewStoryboard(s);
+  else if(tab==='final')h+=viewFinal(s);
+  else h+=viewShots(s);
+  document.getElementById('main').innerHTML=h;
+}
+function renderGate(s){
+  const g=s.pending_gate;
+  let body='';
+  if(g==='outline'&&s.bible){
+    body=`<div class="grid g2" style="margin:10px 0">
+      <div><label>Title</label><input id="ge_title" value="${esc(s.bible.title)}"></div>
+      <div><label>Logline</label><input id="ge_logline" value="${esc(s.bible.logline)}"></div></div>
+      <label>Synopsis</label><textarea id="ge_synopsis">${esc(s.bible.synopsis)}</textarea>`;
+  }else if(g==='storyboard'&&(s.shots||[]).length){
+    body='<div style="max-height:340px;overflow:auto;margin:10px 0">'+s.shots.map(sh=>`
+      <div class="card" style="padding:10px 12px;margin-bottom:8px">
+        <div class="muted" style="font-size:11px;margin-bottom:4px">${sh.id} · ${sh.shot_size} · ${esc(sh.camera)}</div>
+        <input data-gs="${sh.id}" data-f="action" value="${esc(sh.action)}" placeholder="action" style="margin-bottom:5px">
+        <input data-gs="${sh.id}" data-f="dialogue" value="${esc(sh.dialogue||'')}" placeholder="dialogue (optional)">
+      </div>`).join('')+'</div>';
+  }else if(g==='frames'&&Object.keys(s.frames||{}).length){
+    body=`<div class="muted" style="margin:8px 0 4px">每帧 ≈$0.02;批准后这些静帧将成为对应镜头视频的第一帧(~$0.30/镜)。</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0">`+
+      Object.entries(s.frames).map(([sid,url])=>`
+        <div style="text-align:center">
+          <img src="${url}?t=${Date.now()}" style="width:110px;height:196px;object-fit:cover;border-radius:8px;border:1px solid var(--edge)">
+          <div style="margin-top:4px;display:flex;gap:4px;justify-content:center">
+            <span class="muted" style="font-size:10px">${sid}</span>
+            <button class="btn ghost" style="padding:2px 8px;font-size:10px" onclick="redoFrame('${sid}')">↻</button>
+          </div></div>`).join('')+'</div>';
+  }
+  return `<div class="gate" style="display:block"><div style="display:flex;align-items:center;gap:12px">
+    <h3>⏸ Approve: ${g}</h3><span class="muted">可直接修改后批准(超时自动放行)</span>
+    <span style="margin-left:auto;display:flex;gap:8px">
+      <button class="btn ghost" onclick="approveWithEdits('${g}')">✓ Approve${g!=='frames'?' (with edits)':''}</button>
+      <button class="btn ghost" onclick="approve('${g}',false)">✕ Halt</button></span></div>${body}</div>`;
+}
+function collectGateEdits(g){
+  if(g==='outline'){
+    const v=id=>{const el=document.getElementById(id);return el?el.value:null};
+    return {title:v('ge_title'),logline:v('ge_logline'),synopsis:v('ge_synopsis')};
+  }
+  if(g==='storyboard'){
+    const edits={};
+    document.querySelectorAll('[data-gs]').forEach(el=>{
+      const sid=el.dataset.gs,f=el.dataset.f;
+      (edits[sid]=edits[sid]||{})[f]=el.value;
+    });
+    return edits;
+  }
+  return null;
+}
+async function approveWithEdits(g){
+  const edits=collectGateEdits(g);
+  await api('/runs/'+S.runId+'/approve?gate='+g,{method:'POST',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify({decision:true,edits})});
+  poll();
+}
+async function redoFrame(sid){await api('/runs/'+S.runId+'/frames/'+sid+'/redo',{method:'POST'});setTimeout(poll,2500);}
+async function approve(g,ok){await api('/runs/'+S.runId+'/approve?gate='+g+'&decision='+ok,{method:'POST'});poll();}
+async function resumeRun(){await api('/runs/'+S.runId+'/resume',{method:'POST'});
+  if(!S.timer)S.timer=setInterval(poll,3000);poll();}
+async function regenShot(id){await api('/runs/'+S.runId+'/shots/'+id+'/regenerate',{method:'POST'});
+  if(!S.timer)S.timer=setInterval(poll,3000);poll();}
+
+function viewStory(s){
+  if(!s.bible)return '<div class="empty">Planning…</div>';
+  const b=s.bible;const beatColor={hook:'hook',friction:'friction',spike:'spike',button:'button'};
+  return `<div class="grid g2" style="align-items:start;gap:26px">
+    <div><div class="card" style="padding:18px">
+      <div class="dim2" style="font-size:11px;letter-spacing:2px;font-weight:800">LOGLINE</div>
+      <div style="font-size:15px;font-weight:600;margin:6px 0 14px">${esc(b.logline)}</div>
+      <div class="dim2" style="font-size:11px;letter-spacing:2px;font-weight:800">SYNOPSIS</div>
+      <div class="muted" style="margin-top:6px">${esc(b.synopsis)}</div></div>
+      <div class="scenehdr">Cast</div>
+      ${(b.characters||[]).map(c=>`<div class="card charcard" style="margin-bottom:9px"><div class="ph"></div>
+        <div><div style="font-weight:700">${esc(c.name)} <span class="dim2" style="font-weight:500;font-size:12px">· ${esc(c.role)}</span></div>
+        <div class="muted" style="font-size:12px;margin-top:2px">${esc((c.appearance||'').slice(0,110))}</div></div></div>`).join('')}
+    </div>
+    <div><div class="scenehdr" style="margin-top:0">Four-beat sheet</div>
+      ${(s.scenes||[]).map(sc=>{const r=sc.beat_role||'';return `<div class="beatline"><span class="beatdot beat-${r}"></span>
+        <span class="beattag" style="color:var(--${beatColor[r]||'dim'})">${r||'beat'}</span> <span class="dim2" style="font-size:11px">${sc.t||''}</span>
+        <div style="margin-top:3px">${esc(sc.beat)}</div>
+        <div class="muted" style="font-size:12px;margin-top:2px">${esc(sc.tension||'')}</div></div>`}).join('')||'<div class="empty">Beats appear after planning.</div>'}
+    </div></div>`;
+}
+function viewStoryboard(s){
+  const shots=s.shots||[];if(!shots.length)return '<div class="empty">Storyboard appears after the outline is approved.</div>';
+  const byScene={};shots.forEach(sh=>{(byScene[sh.scene_index]=byScene[sh.scene_index]||[]).push(sh)});
+  return Object.keys(byScene).sort((a,b)=>a-b).map(k=>`<div class="scenehdr">Scene ${k}</div>`+
+    byScene[k].map(sh=>`<div class="card" style="padding:13px 15px;margin-bottom:9px">
+      <div style="display:flex;gap:10px;align-items:center">
+        ${sh.beat?`<span class="beattag" style="color:var(--${sh.beat}, var(--dim))">${sh.beat}</span>`:''}
+        <span class="muted" style="font-size:12px">${sh.shot_size} · ${sh.camera}</span>${badge(sh.status)}</div>
+      <div style="font-weight:600;margin-top:6px">${esc(sh.action)}</div>
+      ${sh.dialogue?`<div class="muted" style="font-size:13px;margin-top:4px">“${esc(sh.dialogue)}”</div>`:''}</div>`).join('')).join('');
+}
+function viewShots(s){
+  const shots=s.shots||[];if(!shots.length)return '<div class="empty">Shots render here as they generate.</div>';
+  const lc=s.lifecycle||{};
+  const byScene={};shots.forEach(sh=>{(byScene[sh.scene_index]=byScene[sh.scene_index]||[]).push(sh)});
+  return Object.keys(byScene).sort((a,b)=>a-b).map(k=>`<div class="scenehdr">Scene ${k}</div>`+
+    byScene[k].map(sh=>{
+      const L=lc[sh.id]||{};const state=L.state||sh.status;const locked=state==='locked';
+      const q=sh.qa;const qa=q?`<div class="qa">
+      <span class="q">narrative <b>${q.na??'–'}</b></span><span class="q">consistency <b>${q.cc??'–'}</b></span><span class="q">quality <b>${q.tq??'–'}</b></span></div>`:'';
+      const vid=sh.clip?`<video src="${sh.clip}" ${sh.poster?`poster="${sh.poster}"`:''} muted loop playsinline onmouseover="this.play()" onmouseout="this.pause()"></video>`:`<div class="thumb">${state}</div>`;
+      const versions=(L.versions||[]).length>1?`<div style="display:flex;gap:5px;margin-top:8px;flex-wrap:wrap">
+        <span class="muted" style="font-size:11px">takes:</span>${L.versions.map(v=>{
+          const cur=v.n===L.current;const pass=v.qa&&v.qa.passed;
+          return `<button class="chip ${cur?'on':''}" style="padding:2px 10px;font-size:11px" ${locked?'disabled':''}
+            title="${v.kind}${pass?' · QA passed':v.qa?' · QA failed':''}"
+            onclick="selectVersion('${sh.id}',${v.n})">v${v.n}${pass?' ✓':''}</button>`}).join('')}</div>`:'';
+      return `<div class="card shot">${vid}<div>
+        <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">${sh.beat?`<span class="beattag" style="color:var(--${sh.beat},var(--dim))">${sh.beat}</span>`:''}${badge(state)}${sh.attempts>1?`<span class="muted" style="font-size:11px">try ${sh.attempts}</span>`:''}
+        <span style="margin-left:auto;display:flex;gap:5px">
+          <button class="btn ghost" style="padding:4px 10px;font-size:11px" onclick="toggleRegen('${sh.id}')" ${locked?'disabled':''}>↻ Regen</button>
+          <button class="btn ghost" style="padding:4px 10px;font-size:11px" onclick="continueShot('${sh.id}','extend')" title="继续这个动作(取本镜最后一帧续拍)">⏩ Extend</button>
+          <button class="btn ghost" style="padding:4px 10px;font-size:11px" onclick="continueShot('${sh.id}','jump')" title="切到新场景,保留角色">➜ Jump</button>
+          <button class="btn ghost" style="padding:4px 10px;font-size:11px" onclick="lockShot('${sh.id}',${locked})" title="${locked?'解锁':'锁定该镜头,防止误改'}">${locked?'🔓':'🔒'}</button>
+        </span></div>
+        <div class="act">${esc(sh.action||sh.id)}</div>
+        <div class="cine">${sh.shot_size} · ${esc(sh.camera)}</div>${qa}${versions}
+        <div id="rg_${sh.id}" style="display:none;margin-top:9px;padding:10px;background:var(--bg2);border-radius:8px">
+          <div class="grid g2">
+            <div><label style="margin-top:0">Camera(可选覆盖)</label><select id="rgcam_${sh.id}"><option value="">— keep current —</option></select></div>
+            <div><label style="margin-top:0">Director's note(可选)</label><input id="rgnote_${sh.id}" placeholder="e.g. 更慢的推进,人物先看向窗外"></div>
+          </div>
+          <button class="btn ghost" style="margin-top:9px;padding:6px 14px" onclick="doRegen('${sh.id}')">↻ Regenerate this shot</button>
+        </div></div></div>`;}).join('')).join('')
+    +`<div class="scenehdr">Event log</div><div class="log">${(s.events||[]).map(e=>`${e.stage}${e.shot?' · '+e.shot:''}${e.passed!=null?' · '+(e.passed?'PASS':'retry'):''}${e.cost_usd?' · $'+e.cost_usd:''}`).reverse().join('<br>')}</div>`;
+}
+function toggleRegen(sid){
+  const el=document.getElementById('rg_'+sid);if(!el)return;
+  el.style.display=el.style.display==='none'?'block':'none';
+  const sel=document.getElementById('rgcam_'+sid);
+  if(sel&&sel.options.length<=1&&S.presets)Object.entries(S.presets).forEach(([k,v])=>{
+    const o=document.createElement('option');o.value=k;o.textContent=k+' — '+v;sel.appendChild(o);});
+}
+async function doRegen(sid){
+  const cam=document.getElementById('rgcam_'+sid).value||null;
+  const note=document.getElementById('rgnote_'+sid).value||null;
+  await api('/runs/'+S.runId+'/shots/'+sid+'/regenerate',{method:'POST',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify({camera:cam,note:note})});
+  if(!S.timer)S.timer=setInterval(poll,3000);poll();
+}
+async function continueShot(sid,mode){
+  const label=mode==='extend'?'接下来动作如何继续?(取本镜最后一帧续拍)':'跳到什么新场景?(角色保持一致)';
+  const p=prompt(label);if(!p)return;
+  await api('/runs/'+S.runId+'/shots/'+sid+'/continue',{method:'POST',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:mode,prompt:p})});
+  if(!S.timer)S.timer=setInterval(poll,3000);poll();
+}
+async function selectVersion(sid,n){
+  const r=await api('/runs/'+S.runId+'/shots/'+sid+'/version/'+n,{method:'POST'});
+  if(r.error){alert(r.error);return;}
+  await api('/runs/'+S.runId+'/resume',{method:'POST'});  // re-assemble (subs cached → ~free)
+  if(!S.timer)S.timer=setInterval(poll,3000);poll();
+}
+async function lockShot(sid,locked){
+  await api('/runs/'+S.runId+'/shots/'+sid+'/lock?unlock='+locked,{method:'POST'});poll();
+}
+function viewFinal(s){
+  if(!s.final)return '<div class="empty">The final cut assembles after all shots pass QA.</div>';
+  const subs=s.subtitles||[];const c=s.cost;
+  return `<div class="final"><video src="${s.final}" ${s.cover?`poster="${s.cover}"`:''} controls></video>
+    <div><div class="h1" style="font-size:19px">${esc(s.title)}</div>
+    <div class="muted">${esc((s.bible||{}).logline||'')}</div>
+    <div class="scenehdr" style="margin-top:18px">Subtitle / dub tracks</div>
+    <div class="tracks">${subs.map(t=>`<span class="chip on">${t.lang.toUpperCase()} · ${(t.cues||[]).filter(x=>x.text).length} lines</span>`).join('')||'<span class="muted">—</span>'}</div>
+    <div style="margin:14px 0"><a class="btn ghost" href="${s.final}" download>⤓ Download final.mp4</a></div>
+    ${c?`<div class="scenehdr">Cost</div><table class="costtable">
+      ${Object.entries(c.by_kind||{}).map(([k,v])=>`<tr><td class="muted">${k}</td><td>$${v}</td></tr>`).join('')}
+      <tr><td><b>total</b></td><td>$${c.total}</td></tr></table>`:''}
+    </div></div>`;
+}
+
+function render(){if(S.view==='create')renderCreate();else if(S.view==='runs')renderRuns();
+  else if(S.view==='cast')renderCast();else if(S.view==='run')renderRun();}
+/* boot: deep-link ?run=<id>, else Create */
+(function(){const p=new URLSearchParams(location.search);const q=p.get('run');
+  api('/camera-presets').then(r=>{S.presets=r.presets}).catch(()=>{});
+  async function qhealth(){try{
+    const h=await (await fetch('/healthz')).json();
+    document.getElementById('qmeter').innerHTML=
+      (h.active_job?`⚙ working: ${h.active_job}`:'⚙ idle')+
+      (h.queue_len?` · ${h.queue_len} queued`:'')+(h.auth?' · 🔐':'');
+  }catch(e){}}
+  qhealth();setInterval(qhealth,8000);
+  if(q){openRun(q,p.get('tab'));}else{nav(p.get('view')||'create');}})();
+</script>
+</body>
+</html>

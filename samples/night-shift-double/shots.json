@@ -1,0 +1,94 @@
+{
+  "shots": [
+    {
+      "id": "s0_sh0",
+      "scene_index": 0,
+      "shot_index": 0,
+      "shot_size": "extreme close-up",
+      "camera": "static",
+      "characters_present": [
+        "lin_ye"
+      ],
+      "action": "Flickering CCTV monitor fills the frame. On the grainy screen, a figure identical to 林夜 walks down aisle 3 and tucks a silver-streaked hair behind her ear. In the lower third of the frame, the REAL 林夜's hands press flat on the counter, nails chipped black. The on-screen version smiles at nothing.",
+      "emotion": "dread",
+      "dialogue": "那不是我……那不是我。",
+      "continuity": "CCTV monitor with green-tinted CRT glow, timestamp overlay reading 03:17 AM, dark navy polo sleeve visible at bottom edge, fluorescent overhead flicker casting teal wash, counter surface is scratched white laminate",
+      "duration": 6
+    },
+    {
+      "id": "s0_sh1",
+      "scene_index": 0,
+      "shot_index": 1,
+      "shot_size": "close-up",
+      "camera": "slow dolly-in",
+      "characters_present": [
+        "lin_ye"
+      ],
+      "action": "林夜's face fills the vertical frame, pale skin lit by the monitor's cold glow and a warm sodium spill from the storefront window behind her. She rewinds, plays again — relief washes over her as the live feed matches. Then her eyes drop to the timestamp. Her pupils dilate. The timestamp reads tomorrow's date.",
+      "emotion": "shock",
+      "dialogue": "这个时间戳……是明天的？",
+      "continuity": "Silver streak tucked behind left ear, small silver hoop earring left ear, black choker, faint under-eye shadows, dark navy polo with faded logo patch on left chest, name tag '林夜', monitor glow from left side, sodium orange backlight from right",
+      "duration": 7
+    },
+    {
+      "id": "s1_sh0",
+      "scene_index": 1,
+      "shot_index": 0,
+      "shot_size": "medium",
+      "camera": "handheld",
+      "characters_present": [
+        "lin_ye"
+      ],
+      "action": "林夜 grips a yellow box cutter and steps into aisle 3. Shallow DOF racks focus from her anxious face to the dark gaps between products on the shelves behind her. Fluorescent tubes flicker overhead. She moves slowly, checking each shadow. The aisle stretches tall and claustrophobic in the 9:16 frame.",
+      "emotion": "anxiety",
+      "dialogue": "有人吗？出来。",
+      "continuity": "Dark navy polo, black apron tied at waist, white sneakers scuffed at toes, yellow box cutter in right hand, chipped black nail polish, aisle 3 shelving with colorful product packaging bokeh'd, overhead fluorescent flicker with teal cast",
+      "duration": 6
+    },
+    {
+      "id": "s1_sh1",
+      "scene_index": 1,
+      "shot_index": 1,
+      "shot_size": "over-the-shoulder",
+      "camera": "handheld",
+      "characters_present": [
+        "lin_ye"
+      ],
+      "action": "Over 林夜's shoulder: the storage room door is slightly ajar, a sliver of darkness beyond. She pushes it open — empty. She exhales, then raises her phone to check the remote camera feed. On the phone screen, she sees herself standing in the storage room — but the on-screen version is looking BEHIND her.",
+      "emotion": "terror",
+      "dialogue": "它在看我后面……",
+      "continuity": "Same wardrobe, box cutter now in left hand, phone in right hand with screen glow illuminating her shoulder, storage room door is grey metal with push-bar, dim warm bulb inside storage room, phone screen shows CCTV angle from upper corner of storage room",
+      "duration": 7
+    },
+    {
+      "id": "s2_sh0",
+      "scene_index": 2,
+      "shot_index": 0,
+      "shot_size": "close-up",
+      "camera": "slow dolly-in",
+      "characters_present": [
+        "lin_ye"
+      ],
+      "action": "林夜 slowly turns to face the real wall-mounted security camera. On her phone screen, the other 林夜 also turns — a beat faster. Then the on-screen version stops mimicking. It tilts its head, smiles wide — a cold, unfamiliar grin — and mouths words into the lens. 林夜's phone slips from her fingers. Her own facial muscles begin pulling involuntarily into the same grin.",
+      "emotion": "horror",
+      "dialogue": "你……在笑什么……",
+      "continuity": "Storage room: grey concrete walls, metal shelving with cardboard boxes, single warm bulb overhead, wall-mounted dome camera in upper right, phone screen visible in frame showing the doppelgänger, dark navy polo, black choker, silver streak, involuntary smile beginning to form",
+      "duration": 8
+    },
+    {
+      "id": "s2_sh1",
+      "scene_index": 2,
+      "shot_index": 1,
+      "shot_size": "wide",
+      "camera": "static",
+      "characters_present": [
+        "lin_ye"
+      ],
+      "action": "CCTV monitor back at the empty cashier counter. The screen shows the storage room in grainy footage. TWO identical 林夜s stand side by side, both wearing the exact same cold grin, both staring directly into the camera. The fluorescent light above the counter flickers once. Smash to black.",
+      "emotion": "dread",
+      "dialogue": "",
+      "continuity": "CCTV monitor matches s0_sh0 — same green-tinted CRT, same scratched white laminate counter, timestamp overlay now reading 03:21 AM, both figures on screen wear dark navy polo with black apron, silver streak visible on both, warm sodium spill from storefront window in background",
+      "duration": 5
+    }
+  ]
+}

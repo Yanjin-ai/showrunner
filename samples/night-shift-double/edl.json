@@ -1,0 +1,87 @@
+{
+  "ordered_shot_ids": [
+    "s1_sh0",
+    "s1_sh1",
+    "s2_sh0",
+    "s2_sh1"
+  ],
+  "subtitle_tracks": [
+    {
+      "lang": "zh",
+      "cues": [
+        {
+          "start": 0.0,
+          "end": 6.0,
+          "text": "有人吗？出来。"
+        },
+        {
+          "start": 6.0,
+          "end": 13.0,
+          "text": "它在看我后面……"
+        },
+        {
+          "start": 13.0,
+          "end": 21.0,
+          "text": "你……在笑什么……"
+        },
+        {
+          "start": 21.0,
+          "end": 26.0,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "lang": "en",
+      "cues": [
+        {
+          "start": 0.0,
+          "end": 6.0,
+          "text": "Is anyone there? Come out."
+        },
+        {
+          "start": 6.0,
+          "end": 13.0,
+          "text": "It's watching me from behind..."
+        },
+        {
+          "start": 13.0,
+          "end": 21.0,
+          "text": "What... are you laughing at..."
+        },
+        {
+          "start": 21.0,
+          "end": 26.0,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "lang": "es",
+      "cues": [
+        {
+          "start": 0.0,
+          "end": 6.0,
+          "text": "¿Hay alguien? Salgan."
+        },
+        {
+          "start": 6.0,
+          "end": 13.0,
+          "text": "Me está mirando por detrás..."
+        },
+        {
+          "start": 13.0,
+          "end": 21.0,
+          "text": "¿De qué... te ríes?"
+        },
+        {
+          "start": 21.0,
+          "end": 26.0,
+          "text": ""
+        }
+      ]
+    }
+  ],
+  "music_bed": null,
+  "cover_shot_id": "s1_sh0"
+}

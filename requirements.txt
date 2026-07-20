@@ -1,0 +1,11 @@
+openai>=1.40
+httpx>=0.27
+pydantic>=2.7
+python-dotenv>=1.0
+fastapi>=0.110
+uvicorn[standard]>=0.29
+jinja2>=3.1
+Pillow>=10.0
+# System dependency (not pip): ffmpeg  ->  brew install ffmpeg
+# Note: subtitles are rendered via Pillow + ffmpeg 'overlay' (no libass/drawtext needed).
+# For CJK subtitles on Linux deploy, install a CJK font: apt install fonts-noto-cjk

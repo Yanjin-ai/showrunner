@@ -1,0 +1,16 @@
+{
+  "title": "夜班替身",
+  "logline": "深夜便利店女店员在监控中发现另一个自己正在做她从未做过的事——而那个'她'正缓缓转头看向摄像头。",
+  "genre": "urban suspense / twist",
+  "style": "Cinematic noir, cool teal-orange color grade with deep shadows and neon spill. Shallow depth of field (f/1.4–f/2.8) isolating subject from bokeh'd convenience store aisles. Vertical 9:16 framing emphasizing claustrophobic tall aisles and overhead CCTV angles. Practical fluorescent flicker mixed with warm sodium exterior light bleeding through glass storefront. Handheld micro-movements for unease. Lens: anamorphic-style vertical squeeze with subtle barrel distortion on CCTV POV inserts.",
+  "characters": [
+    {
+      "id": "lin_ye",
+      "name": "林夜",
+      "appearance": "East Asian woman, mid-20s, sharp jawline, pale skin with faint under-eye shadows. Shoulder-length jet-black hair with a single bleached silver streak on the left side, tucked behind ear. Slim build, 165cm. Wearing an oversized dark navy convenience store uniform polo with faded logo patch on left chest, black apron tied at waist, small silver hoop earring left ear only, black choker necklace, chipped black nail polish. Name tag reads '林夜'. White sneakers scuffed at toes.",
+      "personality": "Quiet, hyper-observant, sleep-deprived. Speaks in clipped sentences. Trusts her instincts over logic.",
+      "role": "protagonist"
+    }
+  ],
+  "synopsis": "林夜在凌晨三点的便利店值夜班，百无聊赖地翻看监控回放时，发现画面中的自己正在货架间做出一系列她从未做过的动作——整理头发、对空气微笑、甚至走向仓库门。她惊恐地检查实时画面，监控中的'她'却与她的动作完全同步，仿佛一切正常。当她终于松一口气准备报警时，监控画面里的'她'突然停下所有动作，缓缓转头直视摄像头，露出一个她从未有过的笑容——而林夜自己，根本无法控制脸上正在浮现的同一个微笑。"
+}

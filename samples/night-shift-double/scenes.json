@@ -1,0 +1,25 @@
+{
+  "scenes": [
+    {
+      "index": 0,
+      "location": "24-hour convenience store — cashier counter and CCTV monitor",
+      "time_of_day": "3:17 AM",
+      "beat": "HOOK: Close-up on a flickering CCTV monitor. We see '林夜' on screen walking down aisle 3, reaching up to tuck hair behind her ear — but the REAL 林夜 is sitting at the counter, hands flat on the desk, staring at the screen in confusion. She rewinds. Plays again. The on-screen version smiles at nothing. 林夜 whispers to herself. She checks the live feed — it matches her perfectly. Relief. Then she glances back at the recorded clip timestamp: it's dated TOMORROW.",
+      "tension": "Immediate visual paradox — the viewer sees two versions of the same person doing different things simultaneously. The tomorrow-timestamp reveal escalates from glitch to impossibility in seconds."
+    },
+    {
+      "index": 1,
+      "location": "24-hour convenience store — aisle 3 and back storage corridor",
+      "time_of_day": "3:19 AM",
+      "beat": "林夜 grabs a box cutter from behind the counter and walks into aisle 3 to physically verify the space is empty. Shallow DOF racks between her anxious face and the dark gaps between products on shelves. She reaches the storage room door — it's slightly ajar, though she always locks it. She pushes it open. Empty. She exhales. On her phone, she pulls up the store's remote camera feed to double-check — and sees herself on the phone screen, standing in the storage room, but the on-screen version is looking BEHIND her.",
+      "tension": "Layered surveillance — screen-within-screen-within-screen. The viewer's eye is forced to check every reflection and shadow. The phone-screen reveal creates a second impossible angle."
+    },
+    {
+      "index": 2,
+      "location": "24-hour convenience store — storage room, facing the wall-mounted security camera",
+      "time_of_day": "3:21 AM",
+      "beat": "TWIST: 林夜 slowly turns to face the real wall-mounted camera in the storage room. On her phone screen, the other '林夜' also turns — but a beat FASTER, as if anticipating her. Then the on-screen version stops mimicking entirely. It tilts its head, smiles wide — a cold, unfamiliar grin — and mouths words directly into the lens. 林夜's phone drops. She feels her own facial muscles pulling involuntarily into the exact same grin. She tries to scream but her mouth won't obey. Final frame: the CCTV monitor back at the empty counter now shows TWO 林夜s standing in the storage room, both smiling. Smash to black.",
+      "tension": "The twist reframes everything — the doppelgänger wasn't a recording anomaly, it was a replacement in progress. The involuntary smile is body-horror escalation. The final two-figure frame is the cliffhanger that demands Episode 2."
+    }
+  ]
+}

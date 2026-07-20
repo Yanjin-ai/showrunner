@@ -1,0 +1,15 @@
+services:
+  showrunner:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:?set in .env}
+      SHOWRUNNER_TOKEN: ${SHOWRUNNER_TOKEN:-}   # set to require Bearer auth on mutating endpoints
+      QWEN_BASE_URL: ${QWEN_BASE_URL:-https://dashscope-intl.aliyuncs.com/compatible-mode/v1}
+      VIDEO_BASE_URL: ${VIDEO_BASE_URL:-https://dashscope-intl.aliyuncs.com/api/v1}
+    volumes:
+      - ./runs:/app/runs
+      - ./library:/app/library
+      - ./logs:/app/logs
+    restart: unless-stopped
