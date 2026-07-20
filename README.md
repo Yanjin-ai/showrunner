@@ -7,7 +7,7 @@ An autonomous agent that takes a one-line brief and produces a finished **9:16 u
 micro-drama**: script → story bible → storyboard → per-shot video → self-critiqued regeneration →
 edit → multi-language subtitles.
 
-**See it:** [gallery](docs/devpost/gallery/) · [demo reel](docs/devpost/demo_reel_draft.mp4) ·
+**See it:** [gallery](docs/devpost/gallery/) · [demo reel](docs/devpost/demo_reel.mp4) ·
 a complete replayable production in [samples/night-shift-double](samples/night-shift-double/)
 (story bible → shots → EDL → `final.mp4` with zh/en/es subtitle tracks).
 
@@ -81,6 +81,7 @@ uvicorn showrunner.server:app --host 0.0.0.0 --port 8000   # -> http://localhost
 - [x] **Tiered QA** (free ffprobe precheck before VL judge) · camera presets + director's notes on regen · editable approval gates · `@character` cast reuse from the library
 - [x] **Production-ready**: Bearer-token auth (`SHOWRUNNER_TOKEN`) · single job queue serializing generation · `/healthz` + request logs · **AIGC compliance label** (burned 「AI生成」badge + container metadata) · Dockerfile + docker-compose
 - [x] Docs: [architecture](docs/architecture.md) · [ECS quickstart](docs/ECS_QUICKSTART.md) · [deploy](docs/DEPLOY.md) · [demo script](docs/DEMO_SCRIPT.md) · [Devpost pack](docs/DEVPOST.md)
+- [x] **Qwen-TTS validated live** (`qwen3-tts-flash`) — it narrates the [demo reel](docs/devpost/demo_reel.mp4)
 - [ ] Run full-length flagship drama (hero demo asset)
-- [ ] Deploy to Alibaba Cloud ECS · record 3-min video
-- [ ] *Stretch:* TTS voiceover · driving_audio / last_frame i2v controls
+- [ ] Deploy to Alibaba Cloud ECS · upload demo video
+- [ ] *Stretch:* driving_audio lip-sync · last_frame i2v controls

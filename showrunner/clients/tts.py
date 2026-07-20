@@ -1,8 +1,9 @@
 """Qwen-TTS: character dialogue + narration + multilingual dubbing.
 
-⚠️ NEEDS-VALIDATION: exact DashScope qwen-tts request/response shape to be probed with quota.
-Interface is stable (the pipeline calls `synthesize(text, voice, lang) -> wav path`); only the
-raw HTTP body/return field may need a small fix after probing.
+VALIDATED 2026-07-20 on live QwenCloud: model `qwen3-tts-flash` via
+/services/aigc/multimodal-generation/generation, body {input:{text, voice}},
+response output.audio.url (sync, no async header). Voices: Ethan (en male),
+Cherry (zh/en female), Dylan, Sunny, …
 
 Voices power both per-character dialogue and one-click English dubbing (bidirectional market)."""
 import time
@@ -14,8 +15,8 @@ _BASE = config.VIDEO_BASE_URL
 _SUBMIT = f"{_BASE}/services/aigc/multimodal-generation/generation"   # TODO(validate) may be a tts-specific path
 _HEADERS = {"Authorization": f"Bearer {config.API_KEY}", "Content-Type": "application/json"}
 
-# a few default Qwen-TTS voices per language (placeholders; confirm names on QwenCloud)
-DEFAULT_VOICE = {"zh": "qwen-tts-zhichu", "en": "qwen-tts-eric", "es": "qwen-tts-sofia"}
+# validated Qwen-TTS voices per language (qwen3-tts-flash)
+DEFAULT_VOICE = {"zh": "Cherry", "en": "Ethan", "es": "Cherry"}
 
 
 def synthesize(text: str, dest, *, voice: str | None = None, lang: str = "zh",

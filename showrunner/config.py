@@ -26,7 +26,7 @@ I2V_MODEL = os.getenv("VIDEO_I2V_MODEL", "wan2.7-i2v")
 
 # New modalities (all confirmed available on QwenCloud; exact API shapes to be probed with quota)
 IMAGE_MODEL = os.getenv("QWEN_IMAGE_MODEL", "qwen-image-2.0-pro")
-TTS_MODEL = os.getenv("QWEN_TTS_MODEL", "qwen-tts")
+TTS_MODEL = os.getenv("QWEN_TTS_MODEL", "qwen3-tts-flash")  # validated live 2026-07-20
 
 # Vertical short-drama defaults
 RESOLUTION = "1080P"
